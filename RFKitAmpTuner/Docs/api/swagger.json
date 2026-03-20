@@ -1,0 +1,880 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "0.9.0",
+    "title": "RFKIT"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080"
+    }
+  ],
+  "paths": {
+    "/info": {
+      "get": {
+        "description": "Returns details about the RFKIT device",
+        "operationId": "getInfo",
+        "tags": [
+          "info"
+        ],
+        "responses": {
+          "200": {
+            "description": "Details about the RFKIT device",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Info"
+                },
+                "examples": {
+                  "infoExample": {
+                    "$ref": "#/components/examples/infoExample"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/data": {
+      "get": {
+        "description": "Returns some status data",
+        "operationId": "getData",
+        "tags": [
+          "data"
+        ],
+        "responses": {
+          "200": {
+            "description": "Some status data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Data"
+                },
+                "examples": {
+                  "dataExample": {
+                    "$ref": "#/components/examples/dataExample"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/power": {
+      "get": {
+        "description": "Returns some power data",
+        "operationId": "getPower",
+        "tags": [
+          "power"
+        ],
+        "responses": {
+          "200": {
+            "description": "Some power data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Power"
+                },
+                "examples": {
+                  "powerExample": {
+                    "$ref": "#/components/examples/powerExample"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tuner": {
+      "get": {
+        "description": "Returns some tuner data",
+        "operationId": "getTuner",
+        "tags": [
+          "tuner"
+        ],
+        "responses": {
+          "200": {
+            "description": "Some tuner data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Tuner"
+                },
+                "examples": {
+                  "autoBypass": {
+                    "$ref": "#/components/examples/tunerAutoBypassExample"
+                  },
+                  "manualCL": {
+                    "$ref": "#/components/examples/tunerManualCLExample"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/antennas": {
+      "get": {
+        "description": "Returns the antennas together with their state",
+        "operationId": "getAntennasWithState",
+        "tags": [
+          "antennas"
+        ],
+        "responses": {
+          "200": {
+            "description": "Antennas with their state",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AntennaWithState"
+                  }
+                },
+                "examples": {
+                  "firstInternalAntennaActive": {
+                    "$ref": "#/components/examples/antennasWithStateInternal1Example"
+                  },
+                  "externalAntennaActive": {
+                    "$ref": "#/components/examples/antennasWithStateExternalExample"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/antennas/active": {
+      "get": {
+        "description": "Returns the active antenna",
+        "operationId": "getActiveAntenna",
+        "tags": [
+          "antennas"
+        ],
+        "responses": {
+          "200": {
+            "description": "First internal antenna active",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Antenna"
+                },
+                "examples": {
+                  "firstInternalAntennaActive": {
+                    "$ref": "#/components/examples/internalAntenna1Example"
+                  },
+                  "externalAntennaActive": {
+                    "$ref": "#/components/examples/externalAntennaGetExample"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "description": "Set the active antenna",
+        "operationId": "setActiveAntenna",
+        "tags": [
+          "antennas"
+        ],
+        "requestBody": {
+          "description": "The antenna to set active",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Antenna"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Active antenna after setting",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Antenna"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request body is not valid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Selected antenna is not available or function is currently disabled",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operational-interface": {
+      "get": {
+        "description": "Get the operational interface",
+        "operationId": "getOperationalInterface",
+        "tags": [
+          "operational-interface"
+        ],
+        "responses": {
+          "200": {
+            "description": "Active operational interface",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OperationalInterface"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "description": "Set the operational interface",
+        "operationId": "setOperationalInterface",
+        "tags": [
+          "operational-interface"
+        ],
+        "requestBody": {
+          "description": "The operational interface to set active",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OperationalInterface"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Active operational interface",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OperationalInterface"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request body is not valid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/error/reset": {
+      "post": {
+        "description": "Reset error state",
+        "operationId": "resetError",
+        "tags": [
+          "error"
+        ],
+        "responses": {
+          "200": {
+            "description": "Error reset"
+          },
+          "409": {
+            "description": "Function currently disabled",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operate-mode": {
+      "get": {
+        "description": "Get whether RFKIT is in Operate or Standby mode",
+        "operationId": "getOperateMode",
+        "tags": [
+          "operate-mode"
+        ],
+        "responses": {
+          "200": {
+            "description": "Operate or Standby",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OperateMode"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "description": "Set RFKIT to Operate or Standby",
+        "operationId": "setOperateMode",
+        "tags": [
+          "operate-mode"
+        ],
+        "requestBody": {
+          "description": "The operate mode to set",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OperateMode"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Operate or Standby",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OperateMode"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request body is not valid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Function currently disabled",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Info": {
+        "type": "object",
+        "required": [
+          "device",
+          "software_version",
+          "custom_device_name"
+        ],
+        "properties": {
+          "device": {
+            "type": "string"
+          },
+          "software_version": {
+            "$ref": "#/components/schemas/SoftwareVersion"
+          },
+          "custom_device_name": {
+            "type": "string"
+          }
+        }
+      },
+      "SoftwareVersion": {
+        "type": "object",
+        "required": [
+          "GUI",
+          "controller"
+        ],
+        "properties": {
+          "GUI": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "controller": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "Data": {
+        "type": "object",
+        "required": [
+          "band",
+          "frequency",
+          "status"
+        ],
+        "properties": {
+          "band": {
+            "$ref": "#/components/schemas/IntWithUnit"
+          },
+          "frequency": {
+            "$ref": "#/components/schemas/IntWithUnit"
+          },
+          "status": {
+            "type": "string"
+          }
+        }
+      },
+      "Power": {
+        "type": "object",
+        "required": [
+          "temperature",
+          "voltage",
+          "current",
+          "forward",
+          "reflected",
+          "swr"
+        ],
+        "properties": {
+          "temperature": {
+            "$ref": "#/components/schemas/FloatWithUnit"
+          },
+          "voltage": {
+            "$ref": "#/components/schemas/FloatWithUnit"
+          },
+          "current": {
+            "$ref": "#/components/schemas/FloatWithUnit"
+          },
+          "forward": {
+            "$ref": "#/components/schemas/IntWithMaxAndUnit"
+          },
+          "reflected": {
+            "$ref": "#/components/schemas/IntWithMaxAndUnit"
+          },
+          "swr": {
+            "$ref": "#/components/schemas/FloatWithMaxAndUnit"
+          }
+        }
+      },
+      "Tuner": {
+        "type": "object",
+        "required": [
+          "mode"
+        ],
+        "properties": {
+          "mode": {
+            "type": "string",
+            "enum": [
+              "BYPASS",
+              "MANUAL",
+              "AUTO_TUNING",
+              "AUTO",
+              "OFF"
+            ]
+          },
+          "setup": {
+            "type": "string",
+            "enum": [
+              "NOT TUNED",
+              "BYPASS",
+              "CL",
+              "LC"
+            ]
+          },
+          "L": {
+            "$ref": "#/components/schemas/IntWithUnit"
+          },
+          "C": {
+            "$ref": "#/components/schemas/IntWithUnit"
+          },
+          "tuned_frequency": {
+            "$ref": "#/components/schemas/IntWithUnit"
+          },
+          "segment_size": {
+            "$ref": "#/components/schemas/IntWithUnit"
+          }
+        }
+      },
+      "InternalAntenna": {
+        "type": "object",
+        "required": [
+          "type",
+          "number"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "INTERNAL"
+            ]
+          },
+          "number": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 1,
+            "maximum": 4
+          }
+        }
+      },
+      "ExternalAntenna": {
+        "type": "object",
+        "required": [
+          "type",
+          "number"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "EXTERNAL"
+            ]
+          },
+          "number": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true,
+            "minimum": 1,
+            "maximum": 16
+          }
+        }
+      },
+      "Antenna": {
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/InternalAntenna"
+          },
+          {
+            "$ref": "#/components/schemas/ExternalAntenna"
+          }
+        ]
+      },
+      "AntennaWithState": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Antenna"
+          },
+          {
+            "type": "object",
+            "required": [
+              "state"
+            ],
+            "properties": {
+              "state": {
+                "type": "string",
+                "enum": [
+                  "ACTIVE",
+                  "AVAILABLE",
+                  "DISABLED"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "OperationalInterface": {
+        "type": "object",
+        "required": [
+          "operational_interface"
+        ],
+        "properties": {
+          "operational_interface": {
+            "type": "string",
+            "enum": [
+              "UNIV",
+              "CAT",
+              "UDP",
+              "TCI"
+            ]
+          },
+          "error": {
+            "type": "string",
+            "readOnly": true
+          }
+        }
+      },
+      "OperateMode": {
+        "type": "object",
+        "required": [
+          "operate_mode"
+        ],
+        "properties": {
+          "operate_mode": {
+            "type": "string",
+            "enum": [
+              "OPERATE",
+              "STANDBY"
+            ]
+          }
+        }
+      },
+      "IntWithUnit": {
+        "type": "object",
+        "required": [
+          "value",
+          "unit"
+        ],
+        "properties": {
+          "value": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "unit": {
+            "type": "string"
+          }
+        }
+      },
+      "FloatWithUnit": {
+        "type": "object",
+        "required": [
+          "value",
+          "unit"
+        ],
+        "properties": {
+          "value": {
+            "type": "number",
+            "format": "float"
+          },
+          "unit": {
+            "type": "string"
+          }
+        }
+      },
+      "IntWithMaxAndUnit": {
+        "type": "object",
+        "required": [
+          "value",
+          "max_value",
+          "unit"
+        ],
+        "properties": {
+          "value": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "max_value": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "unit": {
+            "type": "string"
+          }
+        }
+      },
+      "FloatWithMaxAndUnit": {
+        "type": "object",
+        "required": [
+          "value",
+          "max_value",
+          "unit"
+        ],
+        "properties": {
+          "value": {
+            "type": "number",
+            "format": "float"
+          },
+          "max_value": {
+            "type": "number",
+            "format": "float"
+          },
+          "unit": {
+            "type": "string"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "examples": {
+      "infoExample": {
+        "value": {
+          "device": "B26 RF2K-S",
+          "software_version": {
+            "GUI": 108,
+            "controller": 131
+          },
+          "custom_device_name": "My custom RFKIT device name"
+        },
+        "summary": "Example RFKIT device info"
+      },
+      "dataExample": {
+        "value": {
+          "band": {
+            "value": 40,
+            "unit": "m"
+          },
+          "frequency": {
+            "value": 7039,
+            "unit": "kHz"
+          },
+          "status": ""
+        }
+      },
+      "powerExample": {
+        "value": {
+          "temperature": {
+            "value": 23.5,
+            "unit": "°C"
+          },
+          "voltage": {
+            "value": 53.3,
+            "unit": "V"
+          },
+          "current": {
+            "value": 0,
+            "unit": "A"
+          },
+          "forward": {
+            "value": 10,
+            "max_value": 10,
+            "unit": "W"
+          },
+          "reflected": {
+            "value": 0,
+            "max_value": 0,
+            "unit": "W"
+          },
+          "swr": {
+            "value": 1.15,
+            "max_value": 1.15,
+            "unit": ""
+          }
+        }
+      },
+      "tunerAutoBypassExample": {
+        "value": {
+          "mode": "AUTO",
+          "setup": "BYPASS",
+          "tuned_frequency": {
+            "value": 0,
+            "unit": "kHz"
+          },
+          "segment_size": {
+            "value": 75,
+            "unit": "kHz"
+          }
+        }
+      },
+      "tunerManualCLExample": {
+        "value": {
+          "mode": "MANUAL",
+          "setup": "CL",
+          "L": {
+            "value": 0,
+            "unit": "nH"
+          },
+          "C": {
+            "value": 0,
+            "unit": "pF"
+          },
+          "tuned_frequency": {
+            "value": 0,
+            "unit": "kHz"
+          },
+          "segment_size": {
+            "value": 9,
+            "unit": "kHz"
+          }
+        }
+      },
+      "antennasWithStateInternal1Example": {
+        "value": {
+          "antennas": [
+            {
+              "type": "INTERNAL",
+              "number": 1,
+              "state": "ACTIVE"
+            },
+            {
+              "type": "INTERNAL",
+              "number": 2,
+              "state": "AVAILABLE"
+            },
+            {
+              "type": "INTERNAL",
+              "number": 3,
+              "state": "DISABLED"
+            },
+            {
+              "type": "INTERNAL",
+              "number": 4,
+              "state": "AVAILABLE"
+            },
+            {
+              "type": "EXTERNAL",
+              "state": "AVAILABLE"
+            }
+          ]
+        }
+      },
+      "antennasWithStateExternalExample": {
+        "value": {
+          "antennas": [
+            {
+              "type": "INTERNAL",
+              "number": 1,
+              "state": "AVAILABLE"
+            },
+            {
+              "type": "INTERNAL",
+              "number": 2,
+              "state": "AVAILABLE"
+            },
+            {
+              "type": "INTERNAL",
+              "number": 3,
+              "state": "DISABLED"
+            },
+            {
+              "type": "INTERNAL",
+              "number": 4,
+              "state": "AVAILABLE"
+            },
+            {
+              "type": "EXTERNAL",
+              "number": 16,
+              "state": "ACTIVE"
+            }
+          ]
+        }
+      },
+      "internalAntenna1Example": {
+        "value": {
+          "type": "INTERNAL",
+          "number": 1
+        }
+      },
+      "externalAntennaGetExample": {
+        "value": {
+          "type": "EXTERNAL",
+          "number": 16
+        }
+      }
+    }
+  }
+}

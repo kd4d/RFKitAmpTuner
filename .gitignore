@@ -1,0 +1,9 @@
+bin/
+obj/
+.vs/
+*.user
+*.code-workspace
+
+# Local PDF exports (Markdown in repo is canonical)
+RFKitAmpTuner/Docs/*.pdf
+RFKitAmpTuner/README.pdf
