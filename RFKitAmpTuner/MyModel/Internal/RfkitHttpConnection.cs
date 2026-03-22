@@ -25,6 +25,7 @@ namespace RFKitAmpTuner.MyModel.Internal
         private readonly HttpClient _http;
         private readonly int _reconnectDelayMs;
         private readonly HttpRestClient _httpRestClient;
+        private readonly RfkitStartupTrafficCapture? _capture;
 
         private bool _disposed;
         private bool _isRunning;
@@ -44,10 +45,11 @@ namespace RFKitAmpTuner.MyModel.Internal
             get { lock (_lock) { return _connectionState == PluginConnectionState.Connected; } }
         }
 
-        public RfkitHttpConnection(Uri baseUri, CancellationToken cancellationToken, int reconnectDelayMs)
+        public RfkitHttpConnection(Uri baseUri, CancellationToken cancellationToken, int reconnectDelayMs, RfkitStartupTrafficCapture? startupTrafficCapture)
         {
             _cancellationToken = cancellationToken;
             _reconnectDelayMs = Math.Max(Constants.RfkitHttpReconnectDelayMinMs, reconnectDelayMs);
+            _capture = startupTrafficCapture;
             _http = new HttpClient
             {
                 BaseAddress = baseUri,
@@ -68,6 +70,7 @@ namespace RFKitAmpTuner.MyModel.Internal
                 return Task.CompletedTask;
 
             _isRunning = true;
+            _capture?.Begin();
             _ = ConnectMaintenanceLoopAsync();
             return Task.CompletedTask;
         }
@@ -167,10 +170,15 @@ namespace RFKitAmpTuner.MyModel.Internal
             {
                 using var req = new HttpRequestMessage(HttpMethod.Get, "info");
                 using var resp = await _http.SendAsync(req, _cancellationToken).ConfigureAwait(false);
+                var body = resp.Content != null
+                    ? await resp.Content.ReadAsStringAsync(_cancellationToken).ConfigureAwait(false)
+                    : "";
+                _capture?.LogHttp("GET", "info", (int)resp.StatusCode, null, body);
                 return resp.IsSuccessStatusCode;
             }
             catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException)
             {
+                _capture?.LogHttp("GET", "info", null, null, null, ex.Message);
                 Logger.LogVerbose(ModuleName, $"RFKIT probe /info: {ex.Message}");
                 return false;
             }
@@ -190,9 +198,14 @@ namespace RFKitAmpTuner.MyModel.Internal
 
             try
             {
+                _capture?.LogCatOut(data);
                 var response = ProcessCommands(data);
                 if (response.Length > 0)
+                {
+                    _capture?.LogCatIn(response);
                     DataReceived?.Invoke(response);
+                }
+
                 return true;
             }
             catch (HttpRequestException ex)
@@ -244,6 +257,7 @@ namespace RFKitAmpTuner.MyModel.Internal
             _isRunning = false;
             SignalTransportFailure();
             SetState(PluginConnectionState.Disconnected);
+            _capture?.Dispose();
             _http.Dispose();
         }
 
@@ -291,13 +305,17 @@ namespace RFKitAmpTuner.MyModel.Internal
             {
                 using var req = new HttpRequestMessage(HttpMethod.Get, relativePath);
                 using var resp = _http.SendAsync(req, _cancellationToken).GetAwaiter().GetResult();
+                var bodyText = resp.Content != null
+                    ? resp.Content.ReadAsStringAsync(_cancellationToken).GetAwaiter().GetResult()
+                    : "";
+                _capture?.LogHttp("GET", relativePath, (int)resp.StatusCode, null, bodyText);
                 if (!resp.IsSuccessStatusCode)
                     return null;
-                var stream = resp.Content.ReadAsStream(_cancellationToken);
-                return JsonDocument.Parse(stream);
+                return JsonDocument.Parse(bodyText);
             }
             catch (HttpRequestException ex)
             {
+                _capture?.LogHttp("GET", relativePath, null, null, null, ex.Message);
                 Logger.LogVerbose(ModuleName, $"GET {relativePath} failed: {ex.Message}");
                 SignalTransportFailure();
                 return null;
@@ -306,6 +324,7 @@ namespace RFKitAmpTuner.MyModel.Internal
             {
                 if (!_cancellationToken.IsCancellationRequested)
                 {
+                    _capture?.LogHttp("GET", relativePath, null, null, null, ex.Message);
                     Logger.LogVerbose(ModuleName, $"GET {relativePath} timed out: {ex.Message}");
                     SignalTransportFailure();
                 }
@@ -314,6 +333,7 @@ namespace RFKitAmpTuner.MyModel.Internal
             }
             catch (Exception ex)
             {
+                _capture?.LogHttp("GET", relativePath, null, null, null, ex.Message);
                 Logger.LogVerbose(ModuleName, $"GET {relativePath} failed: {ex.Message}");
                 return null;
             }
@@ -338,6 +358,10 @@ namespace RFKitAmpTuner.MyModel.Internal
                     using var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
                     using var req = new HttpRequestMessage(HttpMethod.Put, relativePath) { Content = content };
                     using var resp = _outer._http.SendAsync(req, _outer._cancellationToken).GetAwaiter().GetResult();
+                    var respBody = resp.Content != null
+                        ? resp.Content.ReadAsStringAsync(_outer._cancellationToken).GetAwaiter().GetResult()
+                        : "";
+                    _outer._capture?.LogHttp("PUT", relativePath, (int)resp.StatusCode, jsonBody, respBody);
                     if (!resp.IsSuccessStatusCode)
                     {
                         Logger.LogVerbose(ModuleName, $"PUT {relativePath} returned {(int)resp.StatusCode}");
@@ -348,18 +372,21 @@ namespace RFKitAmpTuner.MyModel.Internal
                 }
                 catch (HttpRequestException ex)
                 {
+                    _outer._capture?.LogHttp("PUT", relativePath, null, jsonBody, null, ex.Message);
                     Logger.LogVerbose(ModuleName, $"PUT {relativePath} failed: {ex.Message}");
                     _outer.SignalTransportFailure();
                     return false;
                 }
                 catch (TaskCanceledException) when (!_outer._cancellationToken.IsCancellationRequested)
                 {
+                    _outer._capture?.LogHttp("PUT", relativePath, null, jsonBody, null, "timeout");
                     Logger.LogVerbose(ModuleName, $"PUT {relativePath} timed out");
                     _outer.SignalTransportFailure();
                     return false;
                 }
                 catch (Exception ex)
                 {
+                    _outer._capture?.LogHttp("PUT", relativePath, null, jsonBody, null, ex.Message);
                     Logger.LogVerbose(ModuleName, $"PUT {relativePath} failed: {ex.Message}");
                     return false;
                 }
@@ -371,6 +398,10 @@ namespace RFKitAmpTuner.MyModel.Internal
                 {
                     using var req = new HttpRequestMessage(HttpMethod.Post, relativePath);
                     using var resp = _outer._http.SendAsync(req, _outer._cancellationToken).GetAwaiter().GetResult();
+                    var respBody = resp.Content != null
+                        ? resp.Content.ReadAsStringAsync(_outer._cancellationToken).GetAwaiter().GetResult()
+                        : "";
+                    _outer._capture?.LogHttp("POST", relativePath, (int)resp.StatusCode, null, respBody);
                     if (!resp.IsSuccessStatusCode)
                     {
                         Logger.LogVerbose(ModuleName, $"POST {relativePath} returned {(int)resp.StatusCode}");
@@ -381,18 +412,21 @@ namespace RFKitAmpTuner.MyModel.Internal
                 }
                 catch (HttpRequestException ex)
                 {
+                    _outer._capture?.LogHttp("POST", relativePath, null, null, null, ex.Message);
                     Logger.LogVerbose(ModuleName, $"POST {relativePath} failed: {ex.Message}");
                     _outer.SignalTransportFailure();
                     return false;
                 }
                 catch (TaskCanceledException) when (!_outer._cancellationToken.IsCancellationRequested)
                 {
+                    _outer._capture?.LogHttp("POST", relativePath, null, null, null, "timeout");
                     Logger.LogVerbose(ModuleName, $"POST {relativePath} timed out");
                     _outer.SignalTransportFailure();
                     return false;
                 }
                 catch (Exception ex)
                 {
+                    _outer._capture?.LogHttp("POST", relativePath, null, null, null, ex.Message);
                     Logger.LogVerbose(ModuleName, $"POST {relativePath} failed: {ex.Message}");
                     return false;
                 }

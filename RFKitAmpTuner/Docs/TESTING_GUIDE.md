@@ -13,6 +13,9 @@
 | 0.5 | 2026-03-20 | **Reconnect visibility:** PgTg UI may not label **Reconnecting**; use **Info** log lines (plugin + **RfkitHttpConnection**). Fixed **Previous** state on **ConnectionStateChanged**. |
 | 0.6 | 2026-03-20 | Phase 8 prep: **Phase A0** — **`dotnet test`** for **`RFKitAmpTuner.Tests`** (no PgTg runtime; needs PgTg **DLLs** for compile, see **INSTALLATION_GUIDE** § 3.1). |
 | 0.7 | 2026-03-20 | Phase 9: **Phase E** — real RFKIT + radio checklist; link **QA_TEST_PLAN**. |
+| 0.8 | 2026-03-22 | **§ B2** — startup HTTP capture file (`RfkitStartupCaptureSeconds`) with **RfkitEmulator** or hardware. |
+| 0.9 | 2026-03-22 | **`RfkitStartupCaptureSeconds`** accepts any duration up to **7200** s (e.g. **600** = 10 min). |
+| 0.10 | 2026-03-22 | Default capture duration **60** s; **0** = off. |
 
 ---
 
@@ -108,6 +111,19 @@ Keep **RfkitEmulator** running (**Phase A**).
 
 1. **RFKIT** plugin **enabled**, TCP **`<your-LAN-IPv4>:8080`** (same IP you set in Plugin Manager; see **Before you start**).
 2. If two amp+tuner plugins are enabled, consider **disabling** the non-RFKIT one during this test to avoid confusion.
+
+### B2.1 Startup HTTP capture (optional — emulator or hardware)
+
+**Goal:** Record **GET/PUT/POST** bodies and **CAT** framing for a **chosen number of seconds** after the plugin connection **`StartAsync`** into a dedicated file (see **[INSTALLATION_GUIDE.md](INSTALLATION_GUIDE.md)** § **5.4.1**).
+
+1. Add to the RFKIT object in **`C:\ProgramData\PgTg\0\SettingsConfig.json`** (with PgTg stopped, backup first), e.g. **`"RfkitStartupCaptureSeconds": 60`** (default one minute), **`600`** (10 minutes), or **`0`** to disable capture. Include **`"RfkitHttpTrafficMaxBodyChars": 8192`**. Maximum duration **7200** s (2 hours); larger values are clamped.
+2. Deploy the plugin DLL that includes **`RfkitStartupTrafficCapture`**, restart PgTgBridge / service.
+3. Start **RfkitEmulator** (Phase **A**) or point at real hardware.
+4. Start the RFKIT plugin connection (**B3**).
+5. Open **`%ProgramData%\PgTg\RfKitAmpTuner\`** and the newest **`rfkit-http-capture-*.log`**. Confirm **`GET /info`**, polling **`GET`s**, and **`CAT >>` / `CAT <<`** sections appear.
+6. Set **`RfkitStartupCaptureSeconds`** to **`0`**, save, restart — leave capture off for normal use.
+
+**Pass criteria:** File exists; HTTP lines match traffic seen on **RfkitEmulator** console (Phase **B5**); no unexpected empty responses during the window when the emulator is healthy.
 
 ### B3. Start the RFKIT plugin connection
 

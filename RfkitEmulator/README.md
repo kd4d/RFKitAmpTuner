@@ -6,6 +6,8 @@ Standalone **RFKIT REST** test double for **`RFKitAmpTuner`** development.
 
 - **Not** a substitute for real RF hardware (no RF, no safety interlocks).
 
+**Plugin-side capture:** The **`RFKitAmpTuner`** DLL can write a **startup HTTP + CAT** debug file for a **configurable number of seconds** (default **60**; **`0`** = off; e.g. **600** = 10 min; max **7200**) to **`%ProgramData%\PgTg\RfKitAmpTuner\`** via **`RfkitStartupCaptureSeconds`** in PgTg settings — useful to compare with this emulator’s console. See **[`../RFKitAmpTuner/Docs/INSTALLATION_GUIDE.md`](../RFKitAmpTuner/Docs/INSTALLATION_GUIDE.md)** § **5.4.1** and **[`../RFKitAmpTuner/Docs/TESTING_GUIDE.md`](../RFKitAmpTuner/Docs/TESTING_GUIDE.md)** § **B2.1**.
+
 ## Logging (standard infrastructure)
 
 | Mechanism | Purpose |

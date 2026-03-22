@@ -33,6 +33,7 @@ Or build the whole solution from the repository root: `dotnet build RFKitAmpTune
 ## Configuration defaults
 
 - **Phase 4 (HTTP):** With **TCP** selected in Plugin Manager (default), **`UseRfkitRestApi`** is **`true`**: the plugin uses **RFKIT REST** at **`http://{IpAddress}:{Port}/`**. Set **`UseRfkitRestApi = false`** only for raw CAT-over-TCP testing. Optional **`HttpBaseUrl`** (non-empty) overrides the derived URL (e.g. `http://192.168.1.5:8080`).
+- **Startup HTTP capture (debug):** **`RfkitStartupCaptureSeconds`** = seconds to capture after connection start (**default `60`**; **`0`** = off; e.g. **`600`** = 10 min; max **7200**). Logs REST + CAT to **`%ProgramData%\PgTg\RfKitAmpTuner\rfkit-http-capture-*.log`**. Bodies truncated per **`RfkitHttpTrafficMaxBodyChars`** (default **8192**). See **`Docs/INSTALLATION_GUIDE.md`** § **5.4.1** and **`Docs/TESTING_GUIDE.md`** § **B2.1**.
 - **REST transport:** **`ReconnectDelayMs`** (Plugin Manager) controls delay between reconnect attempts after **`GET /info`** failure; **`RfkitHttpHeartbeatIntervalMs`** / **`RfkitHttpRequestTimeoutSeconds`** are in **`Constants.cs`**. **`SetFrequencyKhz`** maps to a synthetic **`$FRQ nnnnn;`** echo (no device PUT until the API requires it).
 - Default **TCP** fields: `127.0.0.1:8080` (matches vendor OpenAPI default and **RfkitEmulator**).
 - **`DeviceInitializationEnabled`** defaults to **`false`** in `MyModel/Internal/Constants.cs` (compile-time; rebuild to change). See the integration plan § 2.

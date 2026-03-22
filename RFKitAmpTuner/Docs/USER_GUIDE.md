@@ -6,6 +6,7 @@
 | Revision | Date | Notes |
 |----------|------|--------|
 | 0.1 | 2026-03-20 | Phase 10: connection, REST, PTT, meters, safety. |
+| 0.2 | 2026-03-22 | Optional **startup HTTP capture** file — **[INSTALLATION_GUIDE.md](INSTALLATION_GUIDE.md)** § **5.4.1**. |
 
 ---
 
@@ -32,6 +33,8 @@
 - If PgTg rejects **127.0.0.1**, use your PC’s **non-loopback IPv4** with the emulator (emulator listens on **0.0.0.0:8080**).
 
 **Override URL:** If your host exposes **`HttpBaseUrl`**, a non-empty value replaces `http://{IpAddress}:{Port}/`. See **[INSTALLATION_GUIDE.md](INSTALLATION_GUIDE.md)** § 6.
+
+**Field debugging (advanced):** The plugin can write a **startup HTTP + CAT** log under **`%ProgramData%\PgTg\RfKitAmpTuner\`** for a configurable time (default **60** seconds; set **`RfkitStartupCaptureSeconds`** to **`0`** in **`SettingsConfig.json`** to turn off). See **[INSTALLATION_GUIDE.md](INSTALLATION_GUIDE.md)** § **5.4.1**.
 
 ---
 

@@ -13,6 +13,7 @@
 |----------|------|--------|
 | 0.1 | 2026-03-20 | Phase 10: quick path emulator + hardware pointer. |
 | 0.2 | 2026-03-20 | Test team: full document map + Phase 8–10 execution order; clarify scope vs smoke. |
+| 0.3 | 2026-03-22 | **INSTALLATION_GUIDE** § **5.4.1** — startup HTTP capture file (`RfkitStartupCaptureSeconds`, default **60** s). |
 
 ---
 
@@ -24,7 +25,7 @@ Read in the **order in § Full test execution** when you are running formal QA.
 |----------|---------------------|
 | **[QA_TEST_PLAN.md](QA_TEST_PLAN.md)** | **Master QA hub:** fill **§ Record build under test** (**PgTgBridge version** + **RFKIT firmware**) **every run**; Phase **8 / 9 / 10** exit checklists and release sign-off. |
 | **[TESTING_GUIDE.md](TESTING_GUIDE.md)** | **Step-by-step** instructions: **A0** (unit tests), **A–C** (emulator), **D** (Phase 8 wrap), **E** (hardware + radio). |
-| **[INSTALLATION_GUIDE.md](INSTALLATION_GUIDE.md)** | Install PgTgBridge, **build** plugin, **deploy** DLL, Plugin Manager, **§ 5.5** hardware IP, optional `SettingsConfig.json`. |
+| **[INSTALLATION_GUIDE.md](INSTALLATION_GUIDE.md)** | Install PgTgBridge, **build** plugin, **deploy** DLL, Plugin Manager, **§ 5.5** hardware IP, optional `SettingsConfig.json`, **§ 5.4.1** startup HTTP capture (**`%ProgramData%\PgTg\RfKitAmpTuner\`**). |
 | **[USER_GUIDE.md](USER_GUIDE.md)** | Operator behavior: **TCP = REST URL**, **PTT** (synthetic `$TX;`/`$RX;`), meters, **§ 2.3** safety context. |
 | **[TROUBLESHOOTING.md](TROUBLESHOOTING.md)** | Symptom → fix (connection, **8080 vs 1500**, loopback, meters, emulator). |
 | **[RFKIT_Option1_Integration_And_Test_Plan.md](RFKIT_Option1_Integration_And_Test_Plan.md)** | Engineering: API mapping, PTT/init **decisions**, roadmap (reference for disputes / design questions). |

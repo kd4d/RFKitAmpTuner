@@ -124,7 +124,11 @@ namespace RFKitAmpTuner.MyModel
                 try
                 {
                     var baseUri = _config.GetEffectiveRfkitHttpBaseUri();
-                    _connection = new RfkitHttpConnection(baseUri, _cancellationToken, _config.ReconnectDelayMs);
+                    RfkitStartupTrafficCapture? startupCapture = null;
+                    var captureSec = RfkitStartupTrafficCapture.NormalizeStartupCaptureSeconds(_config.RfkitStartupCaptureSeconds);
+                    if (captureSec > 0)
+                        startupCapture = new RfkitStartupTrafficCapture(captureSec, _config.RfkitHttpTrafficMaxBodyChars, baseUri);
+                    _connection = new RfkitHttpConnection(baseUri, _cancellationToken, _config.ReconnectDelayMs, startupCapture);
                     Logger.LogInfo(ModuleName, $"Using RFKIT REST (HTTP) at {baseUri} (Phase 4; UseRfkitRestApi=true)");
                 }
                 catch (Exception ex)

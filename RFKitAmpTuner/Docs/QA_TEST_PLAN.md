@@ -6,6 +6,7 @@
 |----------|------|--------|
 | 0.1 | 2026-03-20 | Phases 8–10: emulator E2E, hardware + radio, release readiness. |
 | 0.2 | 2026-03-20 | **PgTgBridge** + **RFKIT firmware** fields and how to obtain them; required every run. |
+| 0.3 | 2026-03-22 | Optional evidence: **TESTING_GUIDE** § **B2.1** startup HTTP capture file (see **INSTALLATION_GUIDE** § **5.4.1**). |
 
 ---
 
@@ -75,7 +76,7 @@ Use **at least one** of these:
 
 1. **Phase A0** — Unit tests (optional but recommended for CI / pre-smoke).
 2. **Phase A** — `curl` **GET /info**, **GET /power** (emulator alone).
-3. **Phase B** — Start RFKIT plugin in PgTg; confirm **Connected** and **GET /info** (and polls) in emulator **HttpLogging**.
+3. **Phase B** — Start RFKIT plugin in PgTg; confirm **Connected** and **GET /info** (and polls) in emulator **HttpLogging**. *Optional:* **TESTING_GUIDE** § **B2.1** — enable **`RfkitStartupCaptureSeconds`** (default **60** s in plugin config; **`0`** = off) and attach **`rfkit-http-capture-*.log`** from **`%ProgramData%\PgTg\RfKitAmpTuner\`** as evidence.
 4. **Phase C** — Spot checks: operate/standby if UI allows, **stop emulator** → reconnect behavior per **TESTING_GUIDE**; restart emulator → recovery.
 
 ### 1.3 Phase 8 exit criteria

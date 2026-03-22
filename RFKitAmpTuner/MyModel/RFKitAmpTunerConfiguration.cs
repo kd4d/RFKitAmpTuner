@@ -46,6 +46,21 @@ namespace RFKitAmpTuner.MyModel
         /// </summary>
         public string HttpBaseUrl { get; set; } = "";
 
+        /// <summary>
+        /// Logs RFKIT REST HTTP traffic (and CAT framing) to a UTF-8 file under
+        /// <c>%ProgramData%\PgTg\RfKitAmpTuner\</c> for this many <b>seconds</b> after the connection <c>StartAsync</c>.
+        /// Default <b>60</b> when the property is omitted in new configuration. <b>0</b> = off. Examples: <b>600</b> = 10 minutes.
+        /// Values above <see cref="Constants.RfkitStartupCaptureMaxSeconds"/> are clamped.
+        /// Request/response bodies are truncated per <see cref="RfkitHttpTrafficMaxBodyChars"/>.
+        /// Set in <c>SettingsConfig.json</c> on the RFKIT plugin object (see <b>INSTALLATION_GUIDE</b>).
+        /// </summary>
+        public int RfkitStartupCaptureSeconds { get; set; } = 60;
+
+        /// <summary>
+        /// Max characters logged per request/response body field during startup capture (default 8192 = 8 KB).
+        /// </summary>
+        public int RfkitHttpTrafficMaxBodyChars { get; set; } = Constants.DefaultRfkitHttpTrafficMaxBodyChars;
+
         // IAmplifierConfiguration
         public int PollingIntervalRxMs { get; set; } = Constants.PollingRxMs;
         public int PollingIntervalTxMs { get; set; } = Constants.PollingTxMs;

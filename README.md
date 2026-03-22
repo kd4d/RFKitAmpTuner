@@ -48,7 +48,7 @@ dotnet test RFKitAmpTuner.Tests\RFKitAmpTuner.Tests.csproj -c Release
 dotnet run --project RfkitEmulator\RfkitEmulator.csproj
 ```
 
-Details: **[RfkitEmulator/README.md](RfkitEmulator/README.md)**.
+Details: **[RfkitEmulator/README.md](RfkitEmulator/README.md)**. For **startup HTTP capture** from the plugin (default **60** s, **0** = off; e.g. **600**), see **[RFKitAmpTuner/Docs/INSTALLATION_GUIDE.md](RFKitAmpTuner/Docs/INSTALLATION_GUIDE.md)** § 5.4.1.
 
 ## Git (new clone)
 

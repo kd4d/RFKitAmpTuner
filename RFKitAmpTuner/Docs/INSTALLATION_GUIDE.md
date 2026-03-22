@@ -9,6 +9,9 @@
 | 0.3 | 2026-03-20 | Phase 8 prep: **`dotnet test`** for **`RFKitAmpTuner.Tests`** after build (PgTg **HintPath** required). |
 | 0.4 | 2026-03-20 | Phase 9–10: links to **USER_GUIDE**, **QA_TEST_PLAN**, **TROUBLESHOOTING**, **QUICK_START**; hardware note § 5.5. |
 | 0.5 | 2026-03-20 | Standalone **RFKitAmpTuner** repo: **`RFKitAmpTuner.sln`**, paths; **ATTRIBUTION** / KD4Z baseline. |
+| 0.6 | 2026-03-22 | **Startup HTTP capture:** `RfkitStartupCaptureSeconds` / `RfkitHttpTrafficMaxBodyChars` in settings JSON; log file under **`%ProgramData%\PgTg\RfKitAmpTuner\`**. |
+| 0.7 | 2026-03-22 | Capture duration: any **seconds** &gt; 0 (e.g. **600** = 10 min), max **7200**; clamped if higher. |
+| 0.8 | 2026-03-22 | Default **`RfkitStartupCaptureSeconds`** = **60**; **`0`** disables. |
 
 ---
 
@@ -131,6 +134,32 @@ If **Elecraft KPA1500** (or another amp+tuner plugin) is **also** enabled, the l
 
 Advanced users may edit **`C:\ProgramData\PgTg\0\SettingsConfig.json`** (with PgTgBridge **stopped**, and a **backup** first). Under **`PluginConfigurations`**, locate the object with **`"PluginId": "rfpower.rfkit-amplifier-tuner"`** and set **`Port`** to **`8080`** (and **`IpAddress`** as needed). Restart PgTgBridge after saving.
 
+#### 5.4.1 Startup HTTP capture (field / QA debugging)
+
+After deploying a build that includes **`RfkitStartupTrafficCapture`**, you can log **RFKIT REST** traffic (and **CAT** framing in/out) for a **configurable number of seconds** after the plugin connection starts (countdown begins at **`StartAsync`**). Output is a **UTF-8 text file**, not the main PgTg log.
+
+| JSON property | Values | Purpose |
+|-----------------|--------|---------|
+| **`RfkitStartupCaptureSeconds`** | **Default `60`** (one minute) if omitted in a fresh plugin config; **`0`** = off; **1 … 7200** = capture for that many **seconds** | Examples: **`60`** (default), **`600`** = 10 minutes, **`3600`** = 1 hour. Values **&gt; 7200** are **clamped to 7200** (2 hours max). |
+| **`RfkitHttpTrafficMaxBodyChars`** | Integer (default **8192**) | Max characters per request/response **body** field in the file (8 KB default). Longer payloads are truncated with a marker. |
+
+Add these properties **next to** the other RFKIT fields (same object as **`IpAddress`**, **`Port`**, etc.):
+
+```json
+"RfkitStartupCaptureSeconds": 60,
+"RfkitHttpTrafficMaxBodyChars": 8192
+```
+
+For a longer field capture (e.g. 10 minutes), use **`600`**. For **no** file capture, set **`"RfkitStartupCaptureSeconds": 0`**.
+
+**Log file location:** **`%ProgramData%\PgTg\RfKitAmpTuner\`** (i.e. **`C:\ProgramData\PgTg\RfKitAmpTuner\`** on a typical install). File name pattern: **`rfkit-http-capture-YYYYMMDD-HHMMSS.log`**.
+
+**PgTg log line:** When **`RfkitStartupCaptureSeconds`** is not **`0`**, **`RfkitStartupTrafficCapture`** logs one **Info** line with the **full path** to the file when the window starts (after bridge restart).
+
+**After testing:** Set **`RfkitStartupCaptureSeconds`** back to **`0`** and restart the bridge — capture generates a lot of I/O during fast polling.
+
+**Note:** If PgTg’s host deserializer **drops unknown properties**, use Plugin Manager **Save** after editing JSON, or confirm the RFKIT row still shows your IP/port so the merged config includes these keys.
+
 ### 5.5 RFKIT hardware (not emulator)
 
 For **physical RFKIT** on the LAN:
@@ -147,6 +176,8 @@ For **physical RFKIT** on the LAN:
 |---------|--------|---------|
 | **`UseRfkitRestApi`** | Host **CustomSettings** or full `RFKitAmpTunerConfiguration` if the host supports it | **`false`** = raw CAT-over-TCP; **`true`** (default) = REST. |
 | **`HttpBaseUrl`** | Same | Non-empty overrides `http://{Ip}:{port}/`. |
+| **`RfkitStartupCaptureSeconds`** | **`SettingsConfig.json`** on the RFKIT plugin object (see § 5.4.1) | **Seconds** of capture (**default 60**; **0** = off; max **7200**). |
+| **`RfkitHttpTrafficMaxBodyChars`** | Same | Per-field body limit in that file (default **8192**). |
 
 If the host only supplies generic `IPluginConfiguration`, the plugin still defaults **`UseRfkitRestApi = true`** when it merges into `RFKitAmpTunerConfiguration`.
 

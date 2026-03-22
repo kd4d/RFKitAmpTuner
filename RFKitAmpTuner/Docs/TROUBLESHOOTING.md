@@ -5,6 +5,7 @@
 | Revision | Date | Notes |
 |----------|------|--------|
 | 0.1 | 2026-03-20 | Phase 10: install, connection, meters, PTT, emulator. |
+| 0.2 | 2026-03-22 | Startup HTTP capture file: path, default **60** s, **`0`** = off. |
 
 ---
 
@@ -66,6 +67,16 @@
 |---------|----------------|--------|
 | **Log spam** | **HttpLogging** every request | Lower log level in **`RfkitEmulator/appsettings.json`** |
 | **MSB3026** / file in use | Emulator exe locked | Stop running instance; rebuild (**RfkitEmulator README**) |
+
+---
+
+## Startup HTTP capture (plugin debug file)
+
+| Symptom | Likely cause | Action |
+|---------|----------------|--------|
+| **No** `rfkit-http-capture-*.log` | **`RfkitStartupCaptureSeconds`** is **`0`** in **`SettingsConfig.json`**; capture window ended; REST path not used | Default in plugin config is **60** s; set **`0`** to disable. Confirm **TCP** + **`UseRfkitRestApi`**; see **[INSTALLATION_GUIDE.md](INSTALLATION_GUIDE.md)** § **5.4.1** |
+| **Do not know where file is** | Path not obvious vs **`PgTg.log`** | Files are under **`%ProgramData%\PgTg\RfKitAmpTuner\`** (e.g. **`C:\ProgramData\PgTg\RfKitAmpTuner\`**). PgTg **Info** log line from **`RfkitStartupTrafficCapture`** shows full path when capture starts |
+| **Huge** log / disk use | Fast polling for many minutes | Shorten duration (default **60** s) or set **`0`** after capture; max duration **7200** s (clamped) |
 
 ---
 

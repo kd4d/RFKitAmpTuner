@@ -126,6 +126,16 @@ namespace RFKitAmpTuner.MyModel.Internal
         /// </summary>
         public const int RfkitHttpRequestTimeoutSeconds = 15;
 
+        /// <summary>
+        /// Default max body characters per field in <see cref="RFKitAmpTunerConfiguration.RfkitHttpTrafficMaxBodyChars"/> (startup HTTP capture).
+        /// </summary>
+        public const int DefaultRfkitHttpTrafficMaxBodyChars = 8192;
+
+        /// <summary>
+        /// Upper bound for <see cref="RFKitAmpTunerConfiguration.RfkitStartupCaptureSeconds"/> (e.g. 600 = 10 minutes; values above this are clamped).
+        /// </summary>
+        public const int RfkitStartupCaptureMaxSeconds = 7200;
+
         #endregion
 
         #region CAT Response Keys
