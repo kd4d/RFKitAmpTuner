@@ -1,0 +1,51 @@
+//put in some real-world emulator values by N3OC
+{
+  "info": {
+    "device": "RfKit RF2K-S (emulator)",
+    "software_version": {
+      "GUI": 172,
+      "controller": 251
+    },
+    "custom_device_name": "RfkitEmulator MVP"
+  },
+  "data": {
+    "band": { "value": 40, "unit": "m" },
+    "frequency": {
+      "value": 7039,
+      "unit": "kHz"
+    },
+    // fill something in here to simulate a device error message
+    "status": ""
+  },
+  "power": {
+    "temperature": { "value": 23.5, "unit": "\u00B0C" },
+    "voltage": { "value": 53.3, "unit": "V" },
+    "current": { "value": 0, "unit": "A" },
+    "forward": { "value": 1000, "max_value": 0, "unit": "W" },
+    "reflected": { "value": 5, "max_value": 0, "unit": "W" },
+    "swr": { "value": 1.15, "max_value": 1.00, "unit": "" }
+  },
+  "tuner": {
+    "mode": "AUTO",
+    "setup": "CL",
+    "tuned_frequency": { "value": 7039, "unit": "kHz" },
+    "segment_size": { "value": 25, "unit": "kHz" }
+  },
+  "antennas": [
+    { "type": "INTERNAL", "number": 1, "state": "ACTIVE" },
+    { "type": "INTERNAL", "number": 2, "state": "AVAILABLE" },
+    { "type": "INTERNAL", "number": 3, "state": "DISABLED" },
+    { "type": "INTERNAL", "number": 4, "state": "AVAILABLE" },
+    { "type": "EXTERNAL", "state": "AVAILABLE" }
+  ],
+  "activeAntenna": {
+    "type": "INTERNAL",
+    "number": 1
+  },
+  "operationalInterface": {
+    "operational_interface": "CAT"
+  },
+  "operateMode": {
+    "operate_mode": "OPERATE"
+  }
+}

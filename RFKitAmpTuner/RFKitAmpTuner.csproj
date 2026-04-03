@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <AssemblyVersion>1.0.5</AssemblyVersion>
+    <FileVersion>1.0.5</FileVersion>
+	  <VersionPrefix>1.0.5</VersionPrefix>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.IO.Ports" Version="10.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="RFKitAmpTuner.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="PgTg">
+      <HintPath>C:\Program Files\PgTgBridge\bin\PgTg.dll</HintPath>
+    </Reference>
+    <Reference Include="PgTg.Common">
+      <HintPath>C:\Program Files\PgTgBridge\bin\PgTg.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="PgTg.Helpers">
+      <HintPath>C:\Program Files\PgTgBridge\bin\PgTg.Helpers.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

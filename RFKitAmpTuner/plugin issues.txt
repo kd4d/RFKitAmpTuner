@@ -1,0 +1,24 @@
+plugin 1.0.0 issues
+
+1. where is tuner forward power coming from? map it to same as amp forward power? (tuner reflected power seems to be mapped properly) - both should be same as amp meters
+
+2. can it work with RFKIT as identifier or does main project need to be changed to RF2K-S? - DONE RFKIT is OK
+
+3. how to implement tune API - API is implemented in my modified rest server but action code is not:
+tuner PUT -d {"tuner-mode": "START"}
+
+returns:
+{"result": "SUCCESS"}
+{"result": "OFF"}
+
+4. reset_error when Flex tune button is toggled from ON to OFF - there is an API to POST to force a reset, I wonder if the plugin got that API mapped somewhere... seems like reset_error is toggled after every transmission, investigate
+
+ErrorReset
+
+sent when $FLC; sent by PgTg - fault clear
+
+5. Tg panel has a max of 256 and RK2K-S values are in nh and pf that are frequently higher - DONE for now, divided reported value by 2 but this is not a great fix, but nothing can be done because the meter range is set by Flex
+
+6. RfkitHttpConnection:Send mapping error: One of the identified items was in an invalid format.
+
+7. remove serial configuration from plugin - DONE at UI level, can remove some unused serial code but the sub has to stay present to satisfy the pgtg program requests, maybe some dummy code there instead but it is not hurting anything this way
